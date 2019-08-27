@@ -1,6 +1,5 @@
 <%
   const layers = locals.layers.filter(lyr => !['heatmap', 'hillshade'].includes(lyr.name));
-//   console.log('first layer is', JSON.stringify(layers[0], undefined, 4))
 -%>
 /* eslint-disable */
 // DO NOT MODIFY
@@ -9,46 +8,6 @@
 <%_ for (let layer of layers) { _%>
 import <%- pascelCase(layer.name) _%>Layer from '../components/<%- pascelCase(layer.name) _%>Layer'
 <%_ } _%>
-
-const styleSpec = require('mapbox-gl/dist/style-spec')
-const { createExpression } = styleSpec.expression
-const { isFunction, convertFunction } = styleSpec.function
-const validate = styleSpec.validate
-const spec = styleSpec.v8
-
-function migrate(style) {
-  const migrated = clone(style)
-  migrated.layers = style.layers.map(migrateLayer)
-  return migrated
-}
-
-function migrateLayer(layer) {
-  const migratedLayer = clone(layer)
-  const layerType = (layer.ref ? style.layers.find(l => l.id === layer.ref) : layer).type
-  if (layer.paint) {
-    migratedLayer.paint = migrateProperties(layer, 'paint', layerType)
-  }
-  if (layer.layout) {
-    migratedLayer.layout = migrateProperties(layer, 'layout', layerType)
-  }
-  return migratedLayer
-}
-
-function migrateProperties(layer, paintOrLayout, layerType) {
-  const properties = clone(layer[paintOrLayout])
-  for (const key in properties) {
-    if (isFunction(properties[key])) {
-      const propertySpec = spec[`${paintOrLayout}_${layerType}`][key]
-      properties[key] = convertFunction(properties[key], propertySpec)
-    }
-  }
-  return properties
-}
-
-function clone(src) {
-  return Object.assign({}, src)
-}
-
 
 function stripUndefined(obj) {
   for (const key in obj) {
@@ -63,7 +22,7 @@ export default function MapboxLayerComponentFromStyleJSON({ layer, aboveLayerID,
   // Flatten layout and paint property objects into parent
   layer.layout = layer.layout || {}
   layer.paint = layer.paint || {}
-  const { layout, paint, ...otherProperties } = migrateLayer(layer)
+  const { layout, paint, ...otherProperties } = layer
   const layerProps = { ...layout, ...paint, ...otherProperties }
 
   const commonProps = stripUndefined({
