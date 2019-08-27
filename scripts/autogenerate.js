@@ -305,12 +305,12 @@ function getAllowedFunctionTypes(paintAttr) {
     output: path.join(JS_OUTPUT_PATH, 'styleMap.js'),
   },
   {
-    input: path.join(TMPL_PATH, 'styleJSONToComponentStyleMap.js.ejs'),
-    output: path.join(JS_OUTPUT_PATH, 'styleJSONToComponentStyleMap.js'),
+    input: path.join(TMPL_PATH, 'MapboxLayerComponentFromStyleJSON.js.ejs'),
+    output: path.join(JS_OUTPUT_PATH, 'MapboxLayerComponentFromStyleJSON.js'),
   },
 ].forEach(({input, output}) => {
   const filename = output.split('/').pop();
-  console.log(`Generating ${filename}`);
+  console.log(`Generating ${filename}; to ${output}`);
   const tmpl = ejs.compile(fs.readFileSync(input, 'utf8'), {strict: true});
   let results = tmpl({layers});
   if (filename.endsWith('ts')) {

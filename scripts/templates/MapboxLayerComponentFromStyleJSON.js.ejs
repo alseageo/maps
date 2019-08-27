@@ -59,33 +59,30 @@ function stripUndefined(obj) {
   return obj
 }
 
-export default function MapboxLayerComponentsByStyleJSON({ layer, aboveLayerID, belowLayerID, layerIndex }) {
+export default function MapboxLayerComponentFromStyleJSON({ layer, aboveLayerID, belowLayerID, layerIndex }) {
   // Flatten layout and paint property objects into parent
   layer.layout = layer.layout || {}
   layer.paint = layer.paint || {}
   const { layout, paint, ...otherProperties } = migrateLayer(layer)
-  const lyr = { ...layout, ...paint, ...otherProperties }
+  const layerProps = { ...layout, ...paint, ...otherProperties }
 
   const commonProps = stripUndefined({
-    id: lyr.id,
-    sourceID: lyr.source,
-    <%# reactStyle: %>
-    minZoomLevel: lyr.minzoom,
-    maxZoomLevel: lyr.maxzoom,
+    id: layerProps.id,
+    sourceID: layerProps.source,
+    minZoomLevel: layerProps.minzoom,
+    maxZoomLevel: layerProps.maxzoom,
     aboveLayerID: aboveLayerID,
     belowLayerID: belowLayerID,
     layerIndex: layerIndex,
-    filter: lyr.filter,
-    <%# style: %>
-
-    sourceLayerID: lyr['source-layer'],
+    filter: layerProps.filter,
+    sourceLayerID: layerProps['source-layer'],
   });
 
   <%_ for (let layer of layers) { _%>
   if (layer.type === '<%- layer.name _%>') {
     const style = stripUndefined({
       <%_ for (let prop of layer.properties) { _%>
-      <%= prop.name %>: lyr['<%- kebabCase(prop.name) %>'],
+      <%= prop.name %>: layerProps['<%- kebabCase(prop.name) %>'],
       <%_ } _%>
     })
     return (
