@@ -71,6 +71,10 @@ global.pascelCase = function(str, delimiter = '-') {
     .join('');
 };
 
+global.kebabCase = function(str) {
+  return str.replace(/\.?([A-Z])/g, (x,y) => {return "-" + y.toLowerCase()}).replace(/^_/, "");
+}
+
 global.setLayerMethodName = function(layer, platform) {
   if (platform === 'ios') {
     return `${camelCase(layer.name)}Layer`;
