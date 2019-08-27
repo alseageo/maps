@@ -304,6 +304,10 @@ function getAllowedFunctionTypes(paintAttr) {
     input: path.join(TMPL_PATH, 'styleMap.js.ejs'),
     output: path.join(JS_OUTPUT_PATH, 'styleMap.js'),
   },
+  {
+    input: path.join(TMPL_PATH, 'styleJSONToComponentStyleMap.js.ejs'),
+    output: path.join(JS_OUTPUT_PATH, 'styleJSONToComponentStyleMap.js'),
+  },
 ].forEach(({input, output}) => {
   const filename = output.split('/').pop();
   console.log(`Generating ${filename}`);
@@ -315,7 +319,8 @@ function getAllowedFunctionTypes(paintAttr) {
   fs.writeFileSync(output, results);
 });
 
-// autogenerate docs
-const docBuilder = new DocJSONBuilder(layers);
-const markdownBuilder = new MarkdownBuilder();
-docBuilder.generate().then(() => markdownBuilder.generate());
+// TODO: This is causing crash, so we're temporarily commenting it out
+// // autogenerate docs
+// const docBuilder = new DocJSONBuilder(layers);
+// const markdownBuilder = new MarkdownBuilder();
+// docBuilder.generate().then(() => markdownBuilder.generate());
