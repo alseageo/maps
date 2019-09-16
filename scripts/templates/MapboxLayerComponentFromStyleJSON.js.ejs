@@ -26,6 +26,7 @@ export default function MapboxLayerComponentFromStyleJSON({ layer, aboveLayerID,
   const layerProps = { ...layout, ...paint, ...otherProperties }
 
   const commonProps = stripUndefined({
+    key: layerProps.id,
     id: layerProps.id,
     sourceID: layerProps.source,
     minZoomLevel: layerProps.minzoom,
