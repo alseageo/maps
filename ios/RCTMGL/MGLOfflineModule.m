@@ -333,6 +333,10 @@ RCT_EXPORT_METHOD(setProgressEventThrottle:(nonnull NSNumber *)throttleValue)
         return data;
     }
     
+    if (data == nil) {
+        return @{};
+    }
+    
     return [NSJSONSerialization JSONObjectWithData:[data dataUsingEncoding:NSUTF8StringEncoding]
                                 options:NSJSONReadingMutableContainers
                                 error:nil];
