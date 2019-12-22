@@ -306,7 +306,7 @@ public class RCTMGLOfflineModule extends ReactContextBaseJavaModule {
 
         final OfflineManager offlineManager = OfflineManager.getInstance(mReactContext);
 
-        OfflineManager.mergeOfflineRegions(path, new OfflineManager.MergeOfflineRegionsCallback() {
+        offlineManager.mergeOfflineRegions(path, new OfflineManager.MergeOfflineRegionsCallback() {
             @Override
             public void onMerge(OfflineRegion[] offlineRegions) {
                 WritableArray payload = Arguments.createArray();
