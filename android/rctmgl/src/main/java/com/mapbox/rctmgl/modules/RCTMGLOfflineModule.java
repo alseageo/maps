@@ -312,6 +312,41 @@ public class RCTMGLOfflineModule extends ReactContextBaseJavaModule {
                 WritableArray payload = Arguments.createArray();
 
                 for (OfflineRegion region : offlineRegions) {
+                    try {
+                    boolean hasName = false;
+
+                    byte[] byteMetadata = region.getMetadata();
+                    if (byteMetadata != null) {
+                        JSONObject metadata = new JSONObject(new String(byteMetadata));
+                        hasName = metadata.has("name") && !metadata.isNull("name");
+                    }
+
+                    if (!hasName) {
+                        JSONObject existingMetadata;
+                        if (byteMetadata != null) {
+                            existingMetadata = new JSONObject(new String(byteMetadata));
+                        } else {
+                            existingMetadata = new JSONObject();
+                        }
+                        existingMetadata.put("name", "side-loaded-region");
+
+                        region.updateMetadata(getMetadataBytes(existingMetadata.toString()), new OfflineRegion.OfflineRegionUpdateMetadataCallback() {
+                            @Override
+                            public void onUpdate(byte[] updatedMetadata) {
+
+                            }
+                            @Override
+                            public void onError(String error) {
+                                promise.reject("mergeOfflineRegions", error);
+                            }
+                        });
+
+                    }
+
+                    } catch (JSONException e) {
+                        Log.w(REACT_CLASS, e.getLocalizedMessage());
+                    }
+
                     payload.pushMap(fromOfflineRegion(region));
                 }
 
