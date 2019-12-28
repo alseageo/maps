@@ -148,7 +148,7 @@ class OfflineManager {
 
   /**
    * Sets the maximum number of Mapbox-hosted tiles that may be downloaded and stored on the current device.
-   * The Mapbox Terms of Service prohibits changing or bypassing this limit without permission from Mapbox.
+   * By default, the limit is set to 6000.
    *
    * @example
    * MapboxGL.offlineManager.setTileCountLimit(1000);
