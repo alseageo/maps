@@ -270,4 +270,9 @@ RCT_EXPORT_METHOD(setTelemetryEnabled:(BOOL)telemetryEnabled)
                                             forKey:@"MGLMapboxMetricsEnabled"];
 }
 
+RCT_EXPORT_METHOD(getMapboxSdkVersion:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    resolve(MapboxVersionString);
+}
+
 @end

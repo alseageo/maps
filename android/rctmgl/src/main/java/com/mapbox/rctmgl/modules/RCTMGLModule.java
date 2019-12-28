@@ -351,6 +351,11 @@ public class RCTMGLModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @ReactMethod
+    public void getMapboxSdkVersion(Promise promise) {
+        promise.resolve(com.mapbox.mapboxsdk.BuildConfig.MAPBOX_SDK_VERSION);
+    }
+
     private Dispatcher getDispatcher() {
         Dispatcher dispatcher = new Dispatcher();
         // Matches core limit set on
