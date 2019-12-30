@@ -24,9 +24,15 @@ if [ -d ./Mapbox.framework ]; then
     rm -rf ./Mapbox.framework
 fi
 
-curl -sS https://mapbox.s3.amazonaws.com/mapbox-gl-native/ios/builds/mapbox-ios-sdk-$VERSION-dynamic.zip > temp.zip
+if [ -d ./MapboxMobileEvents.framework ]; then
+    echo "Old MapboxMobileEvents.framework found. Removing it and installing a $VERSION"
+    rm -rf ./MapboxMobileEvents.framework
+fi
+
+curl -sS https://mapbox.s3.amazonaws.com/mapbox-gl-native/ios/builds/mapbox-ios-sdk-$VERSION-dynamic-with-events.zip > temp.zip
 unzip -o temp.zip -d temp
 mv temp/dynamic/Mapbox.framework ./Mapbox.framework
+mv temp/dynamic/MapboxMobileEvents.framework ./MapboxMobileEvents.framework
 rm -r temp
 rm temp.zip
 
