@@ -2,7 +2,7 @@
 
 ### Breaking changes:
 
-* iOS mapbox libraries updated to [5.6.0](https://github.com/mapbox/mapbox-gl-native/releases/tag/ios-v5.6.0) android libraries updated to [8.6.0](https://github.com/mapbox/mapbox-gl-native/releases/tag/android-v8.6.0)
+* iOS mapbox libraries updated to [5.6.1](https://github.com/mapbox/mapbox-gl-native/releases/tag/ios-v5.6.1) android libraries updated to [8.6.0](https://github.com/mapbox/mapbox-gl-native/releases/tag/android-v8.6.0)
 * `StyleSheet.create` removed.
 Mapbox styles are now just a map no need for `StyleSheet.create`.
 `StylesSheet.identity` also removed, use expressions array instead:
