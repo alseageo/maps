@@ -93,12 +93,19 @@ RCT_EXPORT_METHOD(createPack:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     NSString *styleURL = options[@"styleURL"];
-    MGLCoordinateBounds bounds = [RCTMGLUtils fromFeatureCollection:options[@"bounds"]];
     
-    id<MGLOfflineRegion> offlineRegion = [[MGLTilePyramidOfflineRegion alloc] initWithStyleURL:[NSURL URLWithString:styleURL]
-                                                                              bounds:bounds
-                                                                              fromZoomLevel:[options[@"minZoom"] doubleValue]
-                                                                              toZoomLevel:[options[@"maxZoom"] doubleValue]];
+    id<MGLOfflineRegion> offlineRegion;
+    if ([options objectForKey:@"bounds"]) {
+        MGLCoordinateBounds bounds = [RCTMGLUtils fromFeatureCollection:options[@"bounds"]];
+        offlineRegion = [[MGLTilePyramidOfflineRegion alloc] initWithStyleURL:[NSURL URLWithString:styleURL]
+                                                                    bounds:bounds
+                                                                                  fromZoomLevel:[options[@"minZoom"] doubleValue]
+                                                                                  toZoomLevel:[options[@"maxZoom"] doubleValue]];
+    } else if ([options objectForKey:@"geometry"]) {
+        MGLShape *shape = [RCTMGLUtils shapeFromGeoJSON:options[@"geometry"]];
+        offlineRegion = [[MGLShapeOfflineRegion alloc] initWithStyleURL:[NSURL URLWithString:styleURL] shape:shape fromZoomLevel:[options[@"minZoom"] doubleValue] toZoomLevel:[options[@"maxZoom"] doubleValue]];
+    }
+        
     NSData *context = [self _archiveMetadata:options[@"metadata"]];
     
     [[MGLOfflineStorage sharedOfflineStorage] addPackForRegion:offlineRegion
@@ -392,26 +399,35 @@ RCT_EXPORT_METHOD(setProgressEventThrottle:(nonnull NSNumber *)throttleValue)
 
 - (NSDictionary *)_convertPackToDict:(MGLOfflinePack *)pack
 {
-    // format bounds
-    MGLTilePyramidOfflineRegion *region = (MGLTilePyramidOfflineRegion *)pack.region;
-    if (region == nil) {
+    if (pack.region == nil) {
         return nil;
     }
-    
-    NSArray *jsonBounds = @[
-      @[@(region.bounds.ne.longitude), @(region.bounds.ne.latitude)],
-      @[@(region.bounds.sw.longitude), @(region.bounds.sw.latitude)]
-    ];
     
     // format metadata
     NSDictionary *metadata = [self _unarchiveMetadata:pack];
     NSData *jsonMetadata = [NSJSONSerialization dataWithJSONObject:metadata
                                             options:0
                                             error:nil];
-    return @{
-      @"metadata": [[NSString alloc] initWithData:jsonMetadata encoding:NSUTF8StringEncoding],
-      @"bounds": jsonBounds
-    };
+    
+    // format region
+    if ([pack.region isKindOfClass:[MGLShapeOfflineRegion class]]) {
+        MGLShapeOfflineRegion *region = (MGLShapeOfflineRegion *)pack.region;
+        return @{
+          @"metadata": [[NSString alloc] initWithData:jsonMetadata encoding:NSUTF8StringEncoding],
+          @"geometry": [region.shape geoJSONDataUsingEncoding:NSUTF8StringEncoding]
+        };
+    } else {
+        MGLTilePyramidOfflineRegion *region = (MGLTilePyramidOfflineRegion *)pack.region;
+        NSArray *jsonBounds = @[
+          @[@(region.bounds.ne.longitude), @(region.bounds.ne.latitude)],
+          @[@(region.bounds.sw.longitude), @(region.bounds.sw.latitude)]
+        ];
+        
+        return @{
+          @"metadata": [[NSString alloc] initWithData:jsonMetadata encoding:NSUTF8StringEncoding],
+          @"bounds": jsonBounds
+        };
+    }
 }
 
 - (MGLOfflinePack *)_getPackFromName:(NSString *)name

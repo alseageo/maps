@@ -7,7 +7,8 @@ class OfflineCreatePackOptions {
 
     this.name = options.name;
     this.styleURL = options.styleURL;
-    this.bounds = this._makeLatLngBounds(options.bounds);
+    if (options.bounds) this.bounds = this._makeLatLngBounds(options.bounds)
+    if (options.geometry) this.geometry = JSON.stringify(options.geometry)
     this.minZoom = options.minZoom;
     this.maxZoom = options.maxZoom;
     this.metadata = this._makeMetadata(options.metadata);
@@ -24,8 +25,8 @@ class OfflineCreatePackOptions {
       throw new Error('Name must be provided for creating an offline pack');
     }
 
-    if (!options.bounds) {
-      throw new Error('Bounds must be provided for creating an offline pack');
+    if (!(options.bounds || options.geometry)) {
+      throw new Error('Bounds or geometry must be provided for creating an offline pack');
     }
   }
 
